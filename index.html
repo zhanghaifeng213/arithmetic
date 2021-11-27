@@ -23,9 +23,24 @@ function* tokenize(source) {
     token.value = result[0]
     yield token;
   } while(result);
+  yield {type:'EOF'}
 }
 
+let source = [];
+
 for(let token of tokenize("1024 + 10 * 25")){
-  console.log("token", token)
+  if(token.type!=='Whitespace' && token.type !== 'LineTerminator') {
+    source.push(token)
+  }
 }
+
+function Expression(tokens) {}
+
+function AdditiveExpression(source) {}
+
+function MultiplicativeExpression(source) {
+  console.log(source)
+}
+
+MultiplicativeExpression(source)
 </script>
