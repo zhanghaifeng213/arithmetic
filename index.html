@@ -6,11 +6,16 @@ var dictionary = ["Number","Whitespace","LineTerminator","*","/","+","-"];
 function* tokenize(source) {
   var result = null;
   var lastIndex = 0;
-  do {
+  while(true) {
+    // 匹配
     lastIndex = regexp.lastIndex;
     result = regexp.exec(source);
+    // 判断
     if(!result) break;
-
+    if(regexp.lastIndex - lastIndex > result[0].length){
+      throw new Error("Unexpected token \"" +source.slice(lastIndex, regexp.lastIndex - result[0].length)+ "\"!")
+    }
+    // 生成token
     let token = {
       type: null,
       value: null
@@ -22,16 +27,9 @@ function* tokenize(source) {
     }
     token.value = result[0]
     yield token;
-  } while(result);
-  yield {type:'EOF'}
-}
-
-let source = [];
-
-for(let token of tokenize("1 + 2 * 5 + 3")){
-  if(token.type!=='Whitespace' && token.type !== 'LineTerminator') {
-    source.push(token)
-  }
+  };
+  // [\s\S]匹配所有字符
+  yield {type: 'EOF'}
 }
 
 function Expression(tokens) {
@@ -126,7 +124,15 @@ function MultiplicativeExpression(source) {
     return source[0]
   }
 
-  return MultiplicativeExpression(source)
+  throw new Error()
+}
+
+let source = [];
+
+for(let token of tokenize("1 + 2 * 5 + 3")){
+  if(token.type!=='Whitespace' && token.type !== 'LineTerminator') {
+    source.push(token)
+  }
 }
 
 console.log("Expression", Expression(source))
